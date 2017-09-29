@@ -7,7 +7,7 @@ public class Sequence {
     private static int seqWidthLimit;
     private static StringBuilder sequence = new StringBuilder();
     private static String subSequence;
-    private static long curPosition = 1;
+    private static BigInteger curPosition = BigInteger.ONE;
 
     public static void main(String[] args) {
         BigInteger nextNum;
@@ -57,7 +57,7 @@ public class Sequence {
         if(sequence.length() >= seqWidth) {
             result = new StringBuilder(sequence.substring(1));
             result.append(digit);
-            curPosition++;
+            curPosition = curPosition.add(BigInteger.ONE);
         } else {
             result = sequence.append(digit);
         }
