@@ -102,4 +102,35 @@ public class MethodsTests {
 
         Assert.assertFalse(Sequence.areSeqAndSubseqEqual(subSequence, sequence));
     }
+
+    @Test
+    public void testNumbersInRangeCount(){
+        int counter = 0;
+        for(int i = 1000000; i < 10000000; i++){
+            counter++;
+        }
+
+        System.out.println(counter);
+    }
+
+    @Test
+    public void testGetDigitsBeforeNumber(){
+        Assert.assertEquals(BigInteger.valueOf(5), Sequence.getDigitsBeforeNumber(BigInteger.valueOf(5)));
+        Assert.assertEquals(BigInteger.valueOf(20), Sequence.getDigitsBeforeNumber(BigInteger.valueOf(15)));
+        Assert.assertEquals(BigInteger.valueOf(188), Sequence.getDigitsBeforeNumber(BigInteger.valueOf(99)));
+        Assert.assertEquals(BigInteger.valueOf(2887), Sequence.getDigitsBeforeNumber(BigInteger.valueOf(999)));
+        Assert.assertEquals(BigInteger.valueOf(325), Sequence.getDigitsBeforeNumber(BigInteger.valueOf(145)));
+        Assert.assertEquals(BigInteger.valueOf(1693), Sequence.getDigitsBeforeNumber(BigInteger.valueOf(601)));
+        Assert.assertEquals(BigInteger.valueOf(190), Sequence.getDigitsBeforeNumber(BigInteger.valueOf(100)));
+        Assert.assertEquals(BigInteger.valueOf(1), Sequence.getDigitsBeforeNumber(BigInteger.valueOf(1)));
+    }
+
+    @Test
+    public void testGetDigitsInNumber(){
+        BigInteger number = BigInteger.valueOf(3492183710L);
+
+        int digitsInNumber = Sequence.getDigitsInNumber(number);
+
+        Assert.assertEquals(10, digitsInNumber);
+    }
 }
