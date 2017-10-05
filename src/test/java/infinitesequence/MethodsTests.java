@@ -3,6 +3,7 @@ package infinitesequence;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.FileWriter;
 import java.math.BigInteger;
 
 public class MethodsTests {
@@ -16,6 +17,21 @@ public class MethodsTests {
             result = Sequence.getNextNumForSequence(i);
         }
         Assert.assertEquals(BigInteger.TEN, result);
+
+      /*  try{
+            FileWriter writer = new FileWriter("temp.txt", false);
+            for(BigInteger i = BigInteger.valueOf(0); i.compareTo(BigInteger.valueOf(33334104)) < 0; i = i.add(BigInteger.ONE)){
+                result = Sequence.getNextNumForSequence(i);
+                writer.write(result.toString());
+
+                if(i.mod(BigInteger.valueOf(10000)).equals(BigInteger.ZERO)){
+                    writer.flush();
+                }
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        */
     }
 
     @Test
