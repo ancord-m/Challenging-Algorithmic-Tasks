@@ -1,6 +1,8 @@
 package infinitesequence;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Sequence {
@@ -8,6 +10,7 @@ public class Sequence {
     private static StringBuilder sequence = new StringBuilder();
     private static String subSequence;
     private static BigInteger curPosition = BigInteger.ONE;
+    private static BigInteger nothingWasFound = BigInteger.valueOf(-1);
     private static final BigInteger NUMBER_LIMIT = new BigInteger("100000000000000000000");
 
     public static void main(String[] args) {
@@ -135,5 +138,90 @@ public class Sequence {
             digitsInNum++;
         }
         return digitsInNum;
+    }
+
+    /*
+    Methods used for reconstruction of ordinal numbers
+    surrounding the provided sequence from the stdin are presented below.
+    Almost each method looks for several different sequences of ordinal numbers
+    and when these numbers are concatenated together they form the sequence to be found.
+    To be more exact, the sequence of numbers contains the sequence to be found.
+    NOTE ABOUT RETURN VALUE. Everywhere.
+    As there can be found several variants of concatenated ordinal numbers which are yield the desired result
+    each method will return the smallest ordinal number starting with whom the sequence to be found can be generated.
+    "-1" will be returned in the case when nothing was found.
+    P.S. FON - First(Smallest) Ordinal Number
+     */
+
+    /**
+     * If we asked to find the first appearance of zero-sequence, e.g. 0000
+     * the answer is very easy to find. It is obvious that 0000 won't be found
+     * earlier than inside the ordinal number 10000. So one just needs to count
+     * a quantity of zeros (n) and rise 10 to n-th power and that will be the FON answer.
+     * @param subSequence
+     * @return
+     */
+    static BigInteger getFONifSeqConsistsOfZeros(String subSequence){
+        //check that subSequence contains only zeros
+        for(int i = 0; i < subSequence.length(); i++){
+            if(subSequence.charAt(i) != '0'){
+                return nothingWasFound;
+            }
+        }
+
+        return BigInteger.TEN.pow(subSequence.length());
+    }
+
+    /**
+     * The idea of this method is to split a subSequence into two parts and shuffle it
+     * in the way so that the right part will be the beginning of an ordinal number, and the left part - the end.
+     * E.g. we've got 4465
+     * let's split it (dot is the splitter):
+     * 1) 4.465 -> 465 goes to the left, 4 goes to the right,
+     * thus we have two ordinal numbers 4654 4655, and there is 4456 subsequence.
+     * It's first appearance is somewhere after 4654, not bad.
+     * 2) 44.65 -> 6544 and 6545, again we have 4465, but it will be met after 6544,
+     * and 6544 is greater than 4654. Seems to be bad.
+     * 3) 446.5 -> 5446 5447, the appearance will happen after 5446.
+     *
+     * So splitting and shuffling two parts of the provided sequence yields
+     * three approximate first appearances: 4654, 6544, 5446.
+     * It is obvious that 4654 is the FON (first ordinal number) here, because
+     * it gives one the earliest appearance of 4465: 46544655
+     *
+     * P.S. Indeed, the right answer is 464 and 465, but that's the result of another method.
+     */
+    static BigInteger getFONsplitAndShuffle(String subSequence){
+        List<BigInteger> possibleFONs = new ArrayList<BigInteger>();
+
+        //split and shuffle
+        for(int i = 1; i < subSequence.length(); i++){
+            StringBuilder number = new StringBuilder();
+            number.append(subSequence.substring(i));
+            number.append(subSequence.substring(0, i));
+            possibleFONs.add(new BigInteger(number.toString()));
+        }
+
+        //looking for a minimal value
+        BigInteger result = BigInteger.valueOf(Long.MAX_VALUE);
+        for(BigInteger bi : possibleFONs){
+            if(bi.compareTo(result) == -1){
+                result = bi;
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Well, even more simple case than the story with all zeros.
+     * The subsequence at input can be treated as a standalone ordinal number
+     * and probably it's first digit appearance is the answer to the main question of the task.
+     * E.g. 1000.
+     * @param subSequence
+     * @return
+     */
+    static BigInteger getFONuniqueNumber(String subSequence){
+        return new BigInteger(subSequence);
     }
 }

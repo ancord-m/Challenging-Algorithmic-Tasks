@@ -149,4 +149,34 @@ public class MethodsTests {
 
         Assert.assertEquals(10, digitsInNumber);
     }
+
+    @Test
+    public void testGetFON_SequenceOf_n_zeros_TenTo_n_thPower(){
+        String sequence = "00000";
+        Assert.assertEquals(BigInteger.valueOf(100000), Sequence.getFONifSeqConsistsOfZeros(sequence));
+
+        sequence = "0";
+        Assert.assertEquals(BigInteger.valueOf(10), Sequence.getFONifSeqConsistsOfZeros(sequence));
+
+        sequence = "00040";
+        Assert.assertEquals(BigInteger.valueOf(-1), Sequence.getFONifSeqConsistsOfZeros(sequence));
+    }
+
+    @Test
+    public void testGetFONsplitAndShuffle(){
+        String sequence = "4465";
+        BigInteger result = Sequence.getFONsplitAndShuffle(sequence);
+        Assert.assertEquals(BigInteger.valueOf(4654), result);
+
+        sequence = "18765432";
+        result = Sequence.getFONsplitAndShuffle(sequence);
+        Assert.assertEquals(BigInteger.valueOf(21876543), result);
+    }
+
+    @Test
+    public void testGetFONuniqueNumber(){
+        String sequence = "3564536";
+        BigInteger result = Sequence.getFONuniqueNumber(sequence);
+        Assert.assertEquals(BigInteger.valueOf(3564536), result);
+    }
 }
