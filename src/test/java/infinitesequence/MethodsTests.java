@@ -3,7 +3,6 @@ package infinitesequence;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.FileWriter;
 import java.math.BigInteger;
 
 public class MethodsTests {
@@ -145,7 +144,7 @@ public class MethodsTests {
     public void testGetDigitsInNumber(){
         BigInteger number = BigInteger.valueOf(3492183710L);
 
-        int digitsInNumber = Sequence.getDigitsInNumber(number);
+        int digitsInNumber = Sequence.howManyDigitsInNumber(number);
 
         Assert.assertEquals(10, digitsInNumber);
     }
@@ -164,13 +163,17 @@ public class MethodsTests {
 
     @Test
     public void testGetFONsplitAndShuffle(){
-        String sequence = "4465";
-        BigInteger result = Sequence.getFONsplitAndShuffle(sequence);
+        String subSequence = "4465";
+        BigInteger result = Sequence.getFONsplitAndShuffle(subSequence);
         Assert.assertEquals(BigInteger.valueOf(4654), result);
 
-        sequence = "18765432";
-        result = Sequence.getFONsplitAndShuffle(sequence);
+        subSequence = "18765432";
+        result = Sequence.getFONsplitAndShuffle(subSequence);
         Assert.assertEquals(BigInteger.valueOf(21876543), result);
+
+        subSequence = "000400";
+        result = Sequence.getFONsplitAndShuffle(subSequence);
+        Assert.assertEquals(BigInteger.valueOf(4000), result);
     }
 
     @Test
@@ -178,5 +181,51 @@ public class MethodsTests {
         String sequence = "3564536";
         BigInteger result = Sequence.getFONuniqueNumber(sequence);
         Assert.assertEquals(BigInteger.valueOf(3564536), result);
+    }
+
+    @Test
+    public void testGenerateSeqStartingFromNum(){
+        String startingNum = "4567";
+        Integer minLength = 13;
+
+        String result = Sequence.generateSeqStartingFromNum(startingNum, minLength);
+        System.out.println(result);
+
+        Assert.assertEquals("4567456845694570", result);
+    }
+
+    @Test
+    public void testDoesGeneratedSeqContainSubSeq(){
+        String sequence = "4567456845694570";
+        String subSequence = "6945";
+
+        Assert.assertTrue(Sequence.doesGeneratedSeqContainSubSeq(sequence, subSequence));
+
+        subSequence = "111";
+        Assert.assertFalse(Sequence.doesGeneratedSeqContainSubSeq(sequence, subSequence));
+    }
+
+    @Test
+    public void testGetFONcombineDigitsIntoNumLeftToRight(){
+        String subSequence = "0001000050";
+        BigInteger result = Sequence.getFONcombineDigitsIntoNumLeftToRight(subSequence);
+        Assert.assertEquals(BigInteger.valueOf(-1), result);
+
+        subSequence = "4465";
+        result = Sequence.getFONcombineDigitsIntoNumLeftToRight(subSequence);
+        Assert.assertEquals(BigInteger.valueOf(464), result);
+    }
+
+    @Test
+    public void testShiftBackBeginning(){
+        String seqBeginning = "56";
+        int emptyPos = 5;
+        String result = Sequence.shiftBackBeginning(seqBeginning, emptyPos);
+        Assert.assertEquals("53", result);
+
+        seqBeginning = "3";
+        emptyPos = 7;
+        result = Sequence.shiftBackBeginning(seqBeginning, emptyPos);
+        Assert.assertEquals("-1", result);
     }
 }
