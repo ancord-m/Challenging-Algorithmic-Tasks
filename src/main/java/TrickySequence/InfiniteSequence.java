@@ -6,18 +6,17 @@ import java.util.List;
 import java.util.Scanner;
 
 public class InfiniteSequence {
-    private static final BigInteger nothingWasFound = BigInteger.valueOf(-1);
+    private final BigInteger nothingWasFound = BigInteger.valueOf(-1);
 
     public static void main(String[] args) {
         InfiniteSequence infiniteSequence = new InfiniteSequence();
-        final String subSequence = getSubsequence(); //acquiring the desired subsequence
-        long result = findSequence(subSequence);
+
+        String subSequence = infiniteSequence.getSubsequence(); //acquiring the desired subsequence
+        long result = infiniteSequence.findSequence(subSequence);
         System.out.println(result);
-
-
     }
 
-    public static long findSequence(String A){
+    public long findSequence(String A){
         List<BigInteger> tempFONs = new ArrayList<BigInteger>(); //everything with "-1"
         List<BigInteger> possibleFONs = new ArrayList<BigInteger>(); //clean results without -1
 
@@ -27,22 +26,29 @@ public class InfiniteSequence {
         tempFONs.add(getFONrearRightMinusOneGoesToLeft(A));
         tempFONs.add(getFONifSeqConsistsOfZeros(A));
         tempFONs.add(getFONsplitAndShuffle(A));
+        tempFONs.add(getFONpositionOverlap(A));
 
         //cleaning results
-        System.out.println("Possible beginnings");
+        //System.out.println("Possible beginnings");
         for(BigInteger bi : tempFONs){
-            System.out.println(bi);
+            //System.out.println(bi);
             if(bi.compareTo(nothingWasFound) != 0){
                 possibleFONs.add(bi);
                 //  System.out.println(bi);
             }
         }
 
+        if(possibleFONs.isEmpty()){
+            return -1L;
+        }
+
         //picking up the smallest real First Ordinal Number
         BigInteger realFON = findMinimalPossibleFON(possibleFONs);
-        //reconstructing sequence
+        System.out.println("Sequence MUST begin from: " + realFON);
+
+       //reconstructing sequence
         String sequence = generateSeqStartingFromNum(realFON.toString(), A.length());
-        System.out.println("Reconstructed sequence: " + sequence);
+       // System.out.println("Reconstructed sequence: " + sequence);
 
         //calculating the relative position inside the generated sequence which the subSequence starts from
         int positionShift = getSubSeqRelativePos(sequence, A);
@@ -54,10 +60,14 @@ public class InfiniteSequence {
         BigInteger result = firstRealFONdigitPos.add(BigInteger.valueOf(positionShift));
         System.out.println("FIRST ENTRANCE: " + result);
 
+        if(result.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) == 1){
+            return -1L;
+        }
+
         return Long.parseLong(result.toString());
     }
 
-    static String getSubsequence(){
+    String getSubsequence(){
         //System.out.print("Введите искомую последовательность цифр: ");
         Scanner sc = new Scanner(System.in);
         String input = sc.nextLine();
@@ -103,7 +113,7 @@ public class InfiniteSequence {
      * which of them contains the desired 1945 ? There's no such, but it could be there.
      * @return -1 or least first ordinal number
      */
-    static BigInteger getFONcombineDigitsIntoNumLeftToRight(final String subSequence){
+    BigInteger getFONcombineDigitsIntoNumLeftToRight(final String subSequence){
         List<BigInteger> possibleFONs = new ArrayList<BigInteger>();
 
         int length = subSequence.length();
@@ -158,7 +168,7 @@ public class InfiniteSequence {
      * @param subSequence
      * @return
      */
-    static BigInteger getFONcombineDigitsIntoNumRightToLeft(final String subSequence){
+    BigInteger getFONcombineDigitsIntoNumRightToLeft(final String subSequence){
         List<BigInteger> possibleFONs = new ArrayList<BigInteger>();
 
         int length = subSequence.length();
@@ -202,7 +212,7 @@ public class InfiniteSequence {
      * @param subSequence
      * @return
      */
-    static BigInteger getFONrearRightMinusOneGoesToLeft(final String subSequence){
+    BigInteger getFONrearRightMinusOneGoesToLeft(final String subSequence){
         if(subSequence.charAt(subSequence.length() - 1) == '0'){
             return nothingWasFound;
         }
@@ -231,7 +241,7 @@ public class InfiniteSequence {
      * @param subSequence
      * @return
      */
-    static BigInteger getFONifSeqConsistsOfZeros(final String subSequence){
+    BigInteger getFONifSeqConsistsOfZeros(final String subSequence){
         //check that subSequence contains only zeros
         for(int i = 0; i < subSequence.length(); i++){
             if(subSequence.charAt(i) != '0'){
@@ -262,7 +272,7 @@ public class InfiniteSequence {
      *
      * P.S. Indeed, the right answer is 464 and 465, but that's the result of another method.
      */
-    static BigInteger getFONsplitAndShuffle(final String subSequence){
+    BigInteger getFONsplitAndShuffle(final String subSequence){
         List<BigInteger> possibleFONs = new ArrayList<BigInteger>();
 
         //split and shuffle
@@ -292,8 +302,44 @@ public class InfiniteSequence {
      * @param subSequence
      * @return
      */
-    static BigInteger getFONuniqueNumber(final String subSequence){
+    BigInteger getFONuniqueNumber(final String subSequence){
         return new BigInteger(subSequence);
+    }
+
+    /**
+     * CASE #10
+     * This is a bit tricky case when some positions of a number overlap and getFONcombineDigitsIntoNumLeftToRight doesn't work
+     * E.g. we want to find 729147. getFONcombineDigitsIntoNumLeftToRight gives 47291, but the right answer is 14729
+     * (14)729.147(30)
+     *     ^     ^ - this positions, hundredth are periodic
+     * The same with (1)4729.147(30)
+     *                  ^^    ^^
+     * So, this a bit more complex version of split and shuffle method will eliminate such recurrences
+     * @param subSequence
+     * @return
+     */
+    BigInteger getFONpositionOverlap(final String subSequence) {
+        List<BigInteger> possibleFONs = new ArrayList<BigInteger>();
+
+        int howMuchToCut = -1;
+
+        int length = subSequence.length();
+
+        for(int digitsToInspect = 1; digitsToInspect <= length / 2; digitsToInspect++){
+            String left = subSequence.substring(0, digitsToInspect);
+            String right = subSequence.substring(length - digitsToInspect);
+            if(left.equals(right)){
+                howMuchToCut = digitsToInspect;
+            }
+        }
+
+        if(howMuchToCut == -1){
+            return nothingWasFound;
+        }
+        //at last cutting of the overlapping positions
+        String newSubsequence = subSequence.substring(howMuchToCut);
+
+        return getFONsplitAndShuffle(newSubsequence);
     }
 
     //Below are the auxiliary methods
@@ -322,7 +368,7 @@ public class InfiniteSequence {
      * @param number a positive integer
      * @return
      */
-    static BigInteger getDigitsBeforeNumber(BigInteger number){
+    BigInteger getDigitsBeforeNumber(BigInteger number){
         BigInteger NINE = BigInteger.valueOf(9);
         int digitsInNum = howManyDigitsInNumber(number); //how many digits in the NUMBER
 
@@ -352,7 +398,7 @@ public class InfiniteSequence {
      * generating with "<" condition gives us 400000, while with "<=" gives us 400000400001.
      * In the last case the generated sequence contains 000400 while the first one doesn't.
      */
-    static String generateSeqStartingFromNum(final String number, final Integer minLength){
+    String generateSeqStartingFromNum(final String number, final Integer minLength){
         StringBuilder result = new StringBuilder();
         BigInteger biNumber = new BigInteger(number);
 
@@ -364,11 +410,11 @@ public class InfiniteSequence {
         return result.toString();
     }
 
-    static boolean doesGeneratedSeqContainSubSeq(final String generatedSeq, final String subSeq){
+    boolean doesGeneratedSeqContainSubSeq(final String generatedSeq, final String subSeq){
         return generatedSeq.contains(subSeq);
     }
 
-    static int howManyDigitsInNumber(BigInteger number){
+    int howManyDigitsInNumber(BigInteger number){
         BigInteger temp = new BigInteger(number.toString());
         int digitsInNum = 0;
         while (!temp.equals(BigInteger.ZERO)) {
@@ -378,11 +424,11 @@ public class InfiniteSequence {
         return digitsInNum;
     }
 
-    static BigInteger getNextNumForSequence(BigInteger initial){
+    BigInteger getNextNumForSequence(BigInteger initial){
         return initial.add(BigInteger.ONE);
     }
 
-    static BigInteger getPreviousNumForSequence(BigInteger initial){
+    BigInteger getPreviousNumForSequence(BigInteger initial){
         return initial.subtract(BigInteger.ONE);
     }
 
@@ -394,7 +440,7 @@ public class InfiniteSequence {
      * @param emptyPositions how many positions must be closed by digits at the left side of a sequence to be reconstructed
      * @return new decreased beginning, e.g. 54. This gives us 5455565758, so we've reconstructed everything before 58
      */
-    static String shiftBackBeginning(String seqBeginning, int emptyPositions){
+    String shiftBackBeginning(String seqBeginning, int emptyPositions){
         BigInteger newBeginning = new BigInteger(seqBeginning);
         int coveredBack = 0;
 
@@ -410,7 +456,7 @@ public class InfiniteSequence {
         return newBeginning.toString();
     }
 
-    static BigInteger findMinimalPossibleFON(List<BigInteger> possibleFONs) {
+    BigInteger findMinimalPossibleFON(List<BigInteger> possibleFONs) {
         //looking for a minimal value
         BigInteger result = BigInteger.valueOf(Long.MAX_VALUE);
         for (BigInteger bi : possibleFONs) {
@@ -429,13 +475,13 @@ public class InfiniteSequence {
     /** 1. Generate a sequence from number got above longer than subSequence
       * 2. Check whether seq contains subSeq or not
      */
-    static boolean validateSequenceBeginning(String possibleBeginning, String subSequence){
+    boolean validateSequenceBeginning(String possibleBeginning, String subSequence){
         String sequence =
             generateSeqStartingFromNum(possibleBeginning, subSequence.length());
         return doesGeneratedSeqContainSubSeq(sequence, subSequence);
     }
 
-    static int getSubSeqRelativePos(String sequence, String subSequence){
+    int getSubSeqRelativePos(String sequence, String subSequence){
         int relativePos = 0;
         boolean found = false;
 

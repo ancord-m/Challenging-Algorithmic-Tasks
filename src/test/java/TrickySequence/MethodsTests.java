@@ -3,27 +3,29 @@ package TrickySequence;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.FileWriter;
 import java.math.BigInteger;
 
 public class MethodsTests {
     private static final BigInteger nothingWasFound = BigInteger.valueOf(-1);
+    private static InfiniteSequence infiniteSequence = new InfiniteSequence();
 
     @Test
     public void testGetNextNumForSequence(){
-        BigInteger result = InfiniteSequence.getNextNumForSequence(BigInteger.ZERO);
+        BigInteger result = infiniteSequence.getNextNumForSequence(BigInteger.ZERO);
 
         Assert.assertEquals(BigInteger.ONE, result);
 
         for(BigInteger i = BigInteger.ZERO; i.compareTo(BigInteger.TEN) < 0; i = i.add(BigInteger.ONE)){
-            result = InfiniteSequence.getNextNumForSequence(i);
+            result = infiniteSequence.getNextNumForSequence(i);
         }
         Assert.assertEquals(BigInteger.TEN, result);
 
         //Use this to create a text file with infinite sequence. Use MS Notepad to search across the text a FON.
-      /*  try{
+       /* try{
             FileWriter writer = new FileWriter("temp.txt", false);
             for(BigInteger i = BigInteger.valueOf(0); i.compareTo(BigInteger.valueOf(33334104)) < 0; i = i.add(BigInteger.ONE)){
-                result = InfiniteSequence.getNextNumForSequence(i);
+                result = infiniteSequence.getNextNumForSequence(i);
                 writer.write(result.toString());
 
                 if(i.mod(BigInteger.valueOf(10000)).equals(BigInteger.ZERO)){
@@ -48,22 +50,22 @@ public class MethodsTests {
 
     @Test
     public void testGetDigitsBeforeNumber(){
-        Assert.assertEquals(BigInteger.valueOf(5), InfiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(5)));
-        Assert.assertEquals(BigInteger.valueOf(20), InfiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(15)));
-        Assert.assertEquals(BigInteger.valueOf(188), InfiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(99)));
-        Assert.assertEquals(BigInteger.valueOf(2887), InfiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(999)));
-        Assert.assertEquals(BigInteger.valueOf(325), InfiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(145)));
-        Assert.assertEquals(BigInteger.valueOf(1693), InfiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(601)));
-        Assert.assertEquals(BigInteger.valueOf(190), InfiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(100)));
-        Assert.assertEquals(BigInteger.valueOf(1), InfiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(1)));
-        Assert.assertEquals(BigInteger.valueOf(2392), InfiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(834)));
+        Assert.assertEquals(BigInteger.valueOf(5), infiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(5)));
+        Assert.assertEquals(BigInteger.valueOf(20), infiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(15)));
+        Assert.assertEquals(BigInteger.valueOf(188), infiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(99)));
+        Assert.assertEquals(BigInteger.valueOf(2887), infiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(999)));
+        Assert.assertEquals(BigInteger.valueOf(325), infiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(145)));
+        Assert.assertEquals(BigInteger.valueOf(1693), infiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(601)));
+        Assert.assertEquals(BigInteger.valueOf(190), infiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(100)));
+        Assert.assertEquals(BigInteger.valueOf(1), infiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(1)));
+        Assert.assertEquals(BigInteger.valueOf(2392), infiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(834)));
     }
 
     @Test
     public void testGetDigitsInNumber(){
         BigInteger number = BigInteger.valueOf(3492183710L);
 
-        int digitsInNumber = InfiniteSequence.howManyDigitsInNumber(number);
+        int digitsInNumber = infiniteSequence.howManyDigitsInNumber(number);
 
         Assert.assertEquals(10, digitsInNumber);
     }
@@ -71,34 +73,34 @@ public class MethodsTests {
     @Test
     public void testGetFON_SequenceOf_n_zeros_TenTo_n_thPower(){
         String sequence = "00000";
-        Assert.assertEquals(BigInteger.valueOf(100000), InfiniteSequence.getFONifSeqConsistsOfZeros(sequence));
+        Assert.assertEquals(BigInteger.valueOf(100000), infiniteSequence.getFONifSeqConsistsOfZeros(sequence));
 
         sequence = "0";
-        Assert.assertEquals(BigInteger.valueOf(10), InfiniteSequence.getFONifSeqConsistsOfZeros(sequence));
+        Assert.assertEquals(BigInteger.valueOf(10), infiniteSequence.getFONifSeqConsistsOfZeros(sequence));
 
         sequence = "00040";
-        Assert.assertEquals(nothingWasFound, InfiniteSequence.getFONifSeqConsistsOfZeros(sequence));
+        Assert.assertEquals(nothingWasFound, infiniteSequence.getFONifSeqConsistsOfZeros(sequence));
     }
 
     @Test
     public void testGetFONsplitAndShuffle(){
         String subSequence = "4465";
-        BigInteger result = InfiniteSequence.getFONsplitAndShuffle(subSequence);
+        BigInteger result = infiniteSequence.getFONsplitAndShuffle(subSequence);
         Assert.assertEquals(BigInteger.valueOf(4654), result);
 
         subSequence = "18765432";
-        result = InfiniteSequence.getFONsplitAndShuffle(subSequence);
+        result = infiniteSequence.getFONsplitAndShuffle(subSequence);
         Assert.assertEquals(BigInteger.valueOf(21876543), result);
 
         subSequence = "000400";
-        result = InfiniteSequence.getFONsplitAndShuffle(subSequence);
+        result = infiniteSequence.getFONsplitAndShuffle(subSequence);
         Assert.assertEquals(BigInteger.valueOf(4000), result);
     }
 
     @Test
     public void testGetFONuniqueNumber(){
         String sequence = "3564536";
-        BigInteger result = InfiniteSequence.getFONuniqueNumber(sequence);
+        BigInteger result = infiniteSequence.getFONuniqueNumber(sequence);
         Assert.assertEquals(BigInteger.valueOf(3564536), result);
     }
 
@@ -107,7 +109,7 @@ public class MethodsTests {
         String startingNum = "4567";
         Integer minLength = 13;
 
-        String result = InfiniteSequence.generateSeqStartingFromNum(startingNum, minLength);
+        String result = infiniteSequence.generateSeqStartingFromNum(startingNum, minLength);
         System.out.println(result);
 
         Assert.assertEquals("4567456845694570", result);
@@ -118,28 +120,28 @@ public class MethodsTests {
         String sequence = "4567456845694570";
         String subSequence = "6945";
 
-        Assert.assertTrue(InfiniteSequence.doesGeneratedSeqContainSubSeq(sequence, subSequence));
+        Assert.assertTrue(infiniteSequence.doesGeneratedSeqContainSubSeq(sequence, subSequence));
 
         subSequence = "111";
-        Assert.assertFalse(InfiniteSequence.doesGeneratedSeqContainSubSeq(sequence, subSequence));
+        Assert.assertFalse(infiniteSequence.doesGeneratedSeqContainSubSeq(sequence, subSequence));
     }
 
     @Test
     public void testGetFONcombineDigitsIntoNumLeftToRight(){
         String subSequence = "0001000050";
-        BigInteger result = InfiniteSequence.getFONcombineDigitsIntoNumLeftToRight(subSequence);
+        BigInteger result = infiniteSequence.getFONcombineDigitsIntoNumLeftToRight(subSequence);
         Assert.assertEquals(nothingWasFound, result);
 
         subSequence = "4465";
-        result = InfiniteSequence.getFONcombineDigitsIntoNumLeftToRight(subSequence);
+        result = infiniteSequence.getFONcombineDigitsIntoNumLeftToRight(subSequence);
         Assert.assertEquals(BigInteger.valueOf(464), result);
 
         subSequence = "4555";
-        result = InfiniteSequence.getFONcombineDigitsIntoNumLeftToRight(subSequence);
+        result = infiniteSequence.getFONcombineDigitsIntoNumLeftToRight(subSequence);
         Assert.assertEquals(BigInteger.valueOf(54), result);
 
         subSequence = "113472";
-        result = InfiniteSequence.getFONcombineDigitsIntoNumLeftToRight(subSequence);
+        result = infiniteSequence.getFONcombineDigitsIntoNumLeftToRight(subSequence);
         Assert.assertEquals(BigInteger.valueOf(13471), result);
     }
 
@@ -147,46 +149,46 @@ public class MethodsTests {
     public void testShiftBackBeginning(){
         String seqBeginning = "56";
         int emptyPos = 5;
-        String result = InfiniteSequence.shiftBackBeginning(seqBeginning, emptyPos);
+        String result = infiniteSequence.shiftBackBeginning(seqBeginning, emptyPos);
         Assert.assertEquals("53", result);
 
         seqBeginning = "3";
         emptyPos = 7;
-        result = InfiniteSequence.shiftBackBeginning(seqBeginning, emptyPos);
+        result = infiniteSequence.shiftBackBeginning(seqBeginning, emptyPos);
         Assert.assertEquals("-1", result);
     }
 
     @Test
     public void testGetFONrearRightMinusOneGoesToLeft(){
         String subSequence = "9994";
-        BigInteger result = InfiniteSequence.getFONrearRightMinusOneGoesToLeft(subSequence);
+        BigInteger result = infiniteSequence.getFONrearRightMinusOneGoesToLeft(subSequence);
         Assert.assertEquals(BigInteger.valueOf(3999), result);
 
         subSequence = "9990";
-        result = InfiniteSequence.getFONrearRightMinusOneGoesToLeft(subSequence);
+        result = infiniteSequence.getFONrearRightMinusOneGoesToLeft(subSequence);
         Assert.assertEquals(nothingWasFound, result);
 
         subSequence = "441";
-        result = InfiniteSequence.getFONrearRightMinusOneGoesToLeft(subSequence);
+        result = infiniteSequence.getFONrearRightMinusOneGoesToLeft(subSequence);
         Assert.assertEquals(nothingWasFound, result);
 
         subSequence = "94";
-        result = InfiniteSequence.getFONrearRightMinusOneGoesToLeft(subSequence);
+        result = infiniteSequence.getFONrearRightMinusOneGoesToLeft(subSequence);
         Assert.assertEquals(BigInteger.valueOf(39), result);
     }
 
     @Test
     public void testGetFONcombineDigitsIntoNumRightToLeft(){
         String subSequence = "3480";
-        BigInteger result = InfiniteSequence.getFONcombineDigitsIntoNumRightToLeft(subSequence);
+        BigInteger result = infiniteSequence.getFONcombineDigitsIntoNumRightToLeft(subSequence);
         Assert.assertEquals(BigInteger.valueOf(4803), result);
 
         subSequence = "3483";
-        result = InfiniteSequence.getFONcombineDigitsIntoNumRightToLeft(subSequence);
+        result = infiniteSequence.getFONcombineDigitsIntoNumRightToLeft(subSequence);
         Assert.assertEquals(BigInteger.valueOf(834), result);
 
         subSequence = "19472";
-        result = InfiniteSequence.getFONcombineDigitsIntoNumRightToLeft(subSequence);
+        result = infiniteSequence.getFONcombineDigitsIntoNumRightToLeft(subSequence);
         Assert.assertEquals(BigInteger.valueOf(4719), result);
     }
 
@@ -194,28 +196,39 @@ public class MethodsTests {
     public void testGetSubSeqRelativePos(){
         String sequence = "7891011";
         String subSequence = "910";
-        int result = InfiniteSequence.getSubSeqRelativePos(sequence, subSequence);
+        int result = infiniteSequence.getSubSeqRelativePos(sequence, subSequence);
         Assert.assertEquals(2, result);
 
         sequence = "3333456";
         subSequence = "3456";
-        result = InfiniteSequence.getSubSeqRelativePos(sequence, subSequence);
+        result = infiniteSequence.getSubSeqRelativePos(sequence, subSequence);
         Assert.assertEquals(3, result);
 
         sequence = "3334533456";
         subSequence = "3456";
-        result = InfiniteSequence.getSubSeqRelativePos(sequence, subSequence);
+        result = infiniteSequence.getSubSeqRelativePos(sequence, subSequence);
         Assert.assertEquals(6, result);
 
         sequence = "10000";
         subSequence = "0000";
-        result = InfiniteSequence.getSubSeqRelativePos(sequence, subSequence);
+        result = infiniteSequence.getSubSeqRelativePos(sequence, subSequence);
         Assert.assertEquals(1, result);
 
         sequence = "99";
         subSequence = "99";
-        result = InfiniteSequence.getSubSeqRelativePos(sequence, subSequence);
+        result = infiniteSequence.getSubSeqRelativePos(sequence, subSequence);
         Assert.assertEquals(0, result);
+    }
+
+    @Test
+    public void testGetFONpositionOverlap(){
+        String sequence = "934832934";
+        BigInteger result = infiniteSequence.getFONpositionOverlap(sequence);
+        Assert.assertEquals(BigInteger.valueOf(293483), result);
+
+        sequence = "332543253";
+        result = infiniteSequence.getFONpositionOverlap(sequence);
+        Assert.assertEquals(BigInteger.valueOf(25332543), result);
     }
 
     /*
@@ -226,7 +239,7 @@ public class MethodsTests {
         Long digitsBehind = new Long(1);
         StringBuilder seq = new StringBuilder("123");
 
-        StringBuilder result = InfiniteSequence.updateSequence(seq, digit, limitOfSequenceWidth);
+        StringBuilder result = infiniteSequence.updateSequence(seq, digit, limitOfSequenceWidth);
 
         Assert.assertEquals("1235", result.toString());
         Assert.assertEquals(1, digitsBehind.intValue());
@@ -238,7 +251,7 @@ public class MethodsTests {
         int limitOfSequenceWidth = 3;
         StringBuilder seq = new StringBuilder("123");
 
-        StringBuilder result = InfiniteSequence.updateSequence(seq, digit, limitOfSequenceWidth);
+        StringBuilder result = infiniteSequence.updateSequence(seq, digit, limitOfSequenceWidth);
 
         Assert.assertEquals("235", result.toString());
     }
@@ -254,7 +267,7 @@ public class MethodsTests {
 
         for(int i = 0; i < nextNum.toString().length(); i++){
             digit = Character.getNumericValue(nextNum.toString().charAt(i));
-            sequence = InfiniteSequence.updateSequence(sequence, digit, limitOfSequenceWidth);
+            sequence = infiniteSequence.updateSequence(sequence, digit, limitOfSequenceWidth);
             System.out.println(sequence);
 
             expectedResult.append(digit);
@@ -276,7 +289,7 @@ public class MethodsTests {
 
         for(int i = 0; i < nextNum.toString().length(); i++){
             digit = Character.getNumericValue(nextNum.toString().charAt(i));
-            sequence = InfiniteSequence.updateSequence(sequence, digit, limitOfSequenceWidth);
+            sequence = infiniteSequence.updateSequence(sequence, digit, limitOfSequenceWidth);
             System.out.println(sequence);
 
             expectedResult.append(digit);
@@ -293,7 +306,7 @@ public class MethodsTests {
         String subSequence = "41567";
         String sequence = "41567";
 
-        Assert.assertTrue(InfiniteSequence.areSeqAndSubseqEqual(subSequence, sequence));
+        Assert.assertTrue(infiniteSequence.areSeqAndSubseqEqual(subSequence, sequence));
     }
 
         @Test
@@ -301,7 +314,7 @@ public class MethodsTests {
         String subSequence = "41561";
         String sequence = "41567";
 
-        Assert.assertFalse(InfiniteSequence.areSeqAndSubseqEqual(subSequence, sequence));
+        Assert.assertFalse(infiniteSequence.areSeqAndSubseqEqual(subSequence, sequence));
     }
 
      */
