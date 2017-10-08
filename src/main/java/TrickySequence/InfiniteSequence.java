@@ -17,6 +17,11 @@ public class InfiniteSequence {
     }
 
     public long findSequence(String A){
+        A = eliminateNonDigits(A.trim());
+        if(A.equals("")){
+            return -1L;
+        }
+
         List<BigInteger> tempFONs = new ArrayList<BigInteger>(); //everything with "-1"
         List<BigInteger> possibleFONs = new ArrayList<BigInteger>(); //clean results without -1
 
@@ -44,7 +49,7 @@ public class InfiniteSequence {
 
         //picking up the smallest real First Ordinal Number
         BigInteger realFON = findMinimalPossibleFON(possibleFONs);
-        System.out.println("Sequence MUST begin from: " + realFON);
+        //System.out.println("Sequence MUST begin from: " + realFON);
 
        //reconstructing sequence
         String sequence = generateSeqStartingFromNum(realFON.toString(), A.length());
@@ -58,7 +63,7 @@ public class InfiniteSequence {
 
         //correcting and finally calculating the first subSequence appearance!
         BigInteger result = firstRealFONdigitPos.add(BigInteger.valueOf(positionShift));
-        System.out.println("FIRST ENTRANCE: " + result);
+        //System.out.println("FIRST ENTRANCE: " + result);
 
         if(result.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) == 1){
             return -1L;
@@ -71,7 +76,10 @@ public class InfiniteSequence {
         //System.out.print("Введите искомую последовательность цифр: ");
         Scanner sc = new Scanner(System.in);
         String input = sc.nextLine();
+        return input;
+    }
 
+    String eliminateNonDigits(String input){
         StringBuilder cleanResult = new StringBuilder();
         for(int i = 0; i < input.length(); i++){
             if(input.charAt(i) >= '0' && input.charAt(i) <= '9'){
