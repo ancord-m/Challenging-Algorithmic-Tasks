@@ -6,6 +6,8 @@ import org.junit.Test;
 import java.math.BigInteger;
 
 public class MethodsTests {
+    private static final BigInteger nothingWasFound = BigInteger.valueOf(-1);
+
     @Test
     public void testGetNextNumForSequence(){
         BigInteger result = Sequence.getNextNumForSequence(BigInteger.ZERO);
@@ -158,7 +160,7 @@ public class MethodsTests {
         Assert.assertEquals(BigInteger.valueOf(10), Sequence.getFONifSeqConsistsOfZeros(sequence));
 
         sequence = "00040";
-        Assert.assertEquals(BigInteger.valueOf(-1), Sequence.getFONifSeqConsistsOfZeros(sequence));
+        Assert.assertEquals(nothingWasFound, Sequence.getFONifSeqConsistsOfZeros(sequence));
     }
 
     @Test
@@ -209,11 +211,19 @@ public class MethodsTests {
     public void testGetFONcombineDigitsIntoNumLeftToRight(){
         String subSequence = "0001000050";
         BigInteger result = Sequence.getFONcombineDigitsIntoNumLeftToRight(subSequence);
-        Assert.assertEquals(BigInteger.valueOf(-1), result);
+        Assert.assertEquals(nothingWasFound, result);
 
         subSequence = "4465";
         result = Sequence.getFONcombineDigitsIntoNumLeftToRight(subSequence);
         Assert.assertEquals(BigInteger.valueOf(464), result);
+
+        subSequence = "4555";
+        result = Sequence.getFONcombineDigitsIntoNumLeftToRight(subSequence);
+        Assert.assertEquals(BigInteger.valueOf(54), result);
+
+        subSequence = "113472";
+        result = Sequence.getFONcombineDigitsIntoNumLeftToRight(subSequence);
+        Assert.assertEquals(BigInteger.valueOf(13471), result);
     }
 
     @Test
@@ -227,5 +237,24 @@ public class MethodsTests {
         emptyPos = 7;
         result = Sequence.shiftBackBeginning(seqBeginning, emptyPos);
         Assert.assertEquals("-1", result);
+    }
+
+    @Test
+    public void testGetFONrearRightMinusOneGoesToLeft(){
+        String subSequence = "9994";
+        BigInteger result = Sequence.getFONrearRightMinusOneGoesToLeft(subSequence);
+        Assert.assertEquals(BigInteger.valueOf(3999), result);
+
+        subSequence = "9990";
+        result = Sequence.getFONrearRightMinusOneGoesToLeft(subSequence);
+        Assert.assertEquals(nothingWasFound, result);
+
+        subSequence = "441";
+        result = Sequence.getFONrearRightMinusOneGoesToLeft(subSequence);
+        Assert.assertEquals(nothingWasFound, result);
+
+        subSequence = "94";
+        result = Sequence.getFONrearRightMinusOneGoesToLeft(subSequence);
+        Assert.assertEquals(BigInteger.valueOf(39), result);
     }
 }

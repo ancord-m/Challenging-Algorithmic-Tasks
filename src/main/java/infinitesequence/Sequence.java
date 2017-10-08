@@ -121,6 +121,38 @@ public class Sequence {
     }
 
     /**
+     * CASE #3
+     * The main idea is to take the rear right digit, subtract one - of course if a digit is not zero -
+     * and place the result at the rear left side. Now one can just work with what appeared
+     * (without taking into account the very right digit) as with a number.
+     * E.g. at input we have 9994, taking 4, subtracting 1 and placing it to the left
+     * give us (3)999.4, i.e. 3999 4000.
+     *
+     * @param subSequence
+     * @return
+     */
+    static BigInteger getFONrearRightMinusOneGoesToLeft(final String subSequence){
+        if(subSequence.charAt(subSequence.length() - 1) == '0'){
+            return nothingWasFound;
+        }
+
+        Integer rearRightDigit = Integer.parseInt(
+                String.valueOf(subSequence.charAt(subSequence.length() - 1)));
+        rearRightDigit--;
+
+        StringBuilder number = new StringBuilder();
+        number.append(rearRightDigit);
+        number.append(subSequence.substring(0, subSequence.length() - 1));
+
+        if(doesGeneratedSeqContainSubSeq(
+                generateSeqStartingFromNum(number.toString(), subSequence.length()), subSequence)){
+            return new BigInteger(number.toString());
+        }
+
+        return nothingWasFound;
+    }
+
+    /**
      * CASE #6
      * If we asked to find the first appearance of zero-sequence, e.g. 0000
      * the answer is very easy to find. It is obvious that 0000 won't be found
