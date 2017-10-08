@@ -469,12 +469,17 @@ public class InfiniteSequence {
     BigInteger findMinimalPossibleFON(List<BigInteger> possibleFONs) {
         //looking for a minimal value
         BigInteger result = BigInteger.valueOf(Long.MAX_VALUE);
+        //BigInteger result = BigInteger.TEN.pow(500);
         for (BigInteger bi : possibleFONs) {
             if (bi.compareTo(BigInteger.ZERO) != 0 && bi.compareTo(result) == -1) {
                 result = bi;
             }
         }
 
+        //ATTENTION!!! THIS IS THE LIMITING IF-CASE
+        //switch it off to jump over LONG.MAX_VALUE
+        //and un-comment result 10^500
+        //to print out really enormous first appearance positions
         if(result.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) == 0){
             return nothingWasFound;
         }
