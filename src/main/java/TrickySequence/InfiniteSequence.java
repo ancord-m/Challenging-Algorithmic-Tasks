@@ -1,56 +1,76 @@
-package infinitesequence;
+package TrickySequence;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Sequence {
-    private static int seqWidthLimit;
-    private static StringBuilder sequence = new StringBuilder();
-    private static String subSequence;
-    private static BigInteger curPosition = BigInteger.ONE;
-    private static BigInteger nothingWasFound = BigInteger.valueOf(-1);
-    private static final BigInteger NUMBER_LIMIT = new BigInteger("100000000000000000000");
+public class InfiniteSequence {
+    private static final BigInteger nothingWasFound = BigInteger.valueOf(-1);
 
     public static void main(String[] args) {
-        BigInteger nextNum;
-        Integer digit;
-        boolean found = false;
+        InfiniteSequence infiniteSequence = new InfiniteSequence();
+        final String subSequence = getSubsequence(); //acquiring the desired subsequence
+        long result = findSequence(subSequence);
+        System.out.println(result);
 
-        subSequence = getSubsequence(); //получаем искомую последовательность
-        setSeqWidthLimit(subSequence.length()); //выставляем ограничение на ширину бесконечной последовательности
-        for(BigInteger i = BigInteger.ZERO; i.compareTo(NUMBER_LIMIT) < 0 && !found; i = i.add(BigInteger.ONE)){
-            nextNum = getNextNumForSequence(i);
-            for(int j = 0; j < nextNum.toString().length(); j++) {
-                digit = Character.getNumericValue(nextNum.toString().charAt(j));
-                sequence = updateSequence(sequence, digit, seqWidthLimit);
-                found = areSeqAndSubseqEqual(subSequence, sequence.toString());
 
-                if(found){
-                    System.out.println("Found");
-                    System.out.println("Subsequence: " + subSequence);
-                    System.out.println("Sequence: " + sequence);
-                    System.out.println("First occurance at position " + curPosition);
-                    break;
-                }
-            }
+    }
 
-            if(i.mod(BigInteger.valueOf(1000000)).equals(BigInteger.ZERO)){
-                System.out.println("Passed number " + i);
+    public static long findSequence(String A){
+        List<BigInteger> tempFONs = new ArrayList<BigInteger>(); //everything with "-1"
+        List<BigInteger> possibleFONs = new ArrayList<BigInteger>(); //clean results without -1
+
+        //trying to find all possible ordinal numbers which can give the subsequence
+        tempFONs.add(getFONcombineDigitsIntoNumLeftToRight(A));
+        tempFONs.add(getFONcombineDigitsIntoNumRightToLeft(A));
+        tempFONs.add(getFONrearRightMinusOneGoesToLeft(A));
+        tempFONs.add(getFONifSeqConsistsOfZeros(A));
+        tempFONs.add(getFONsplitAndShuffle(A));
+
+        //cleaning results
+        System.out.println("Possible beginnings");
+        for(BigInteger bi : tempFONs){
+            System.out.println(bi);
+            if(bi.compareTo(nothingWasFound) != 0){
+                possibleFONs.add(bi);
+                //  System.out.println(bi);
             }
         }
+
+        //picking up the smallest real First Ordinal Number
+        BigInteger realFON = findMinimalPossibleFON(possibleFONs);
+        //reconstructing sequence
+        String sequence = generateSeqStartingFromNum(realFON.toString(), A.length());
+        System.out.println("Reconstructed sequence: " + sequence);
+
+        //calculating the relative position inside the generated sequence which the subSequence starts from
+        int positionShift = getSubSeqRelativePos(sequence, A);
+
+        //looking for the first entrance of first realFON's digit
+        BigInteger firstRealFONdigitPos = getDigitsBeforeNumber(realFON);
+
+        //correcting and finally calculating the first subSequence appearance!
+        BigInteger result = firstRealFONdigitPos.add(BigInteger.valueOf(positionShift));
+        System.out.println("FIRST ENTRANCE: " + result);
+
+        return Long.parseLong(result.toString());
     }
 
     static String getSubsequence(){
-        String result;
-        System.out.print("Введите искомую последовательность цифр: ");
+        //System.out.print("Введите искомую последовательность цифр: ");
         Scanner sc = new Scanner(System.in);
-        result = sc.nextLine();
-        //TODO оставлять только цифры
-        return result;
-    }
+        String input = sc.nextLine();
 
+        StringBuilder cleanResult = new StringBuilder();
+        for(int i = 0; i < input.length(); i++){
+            if(input.charAt(i) >= '0' && input.charAt(i) <= '9'){
+                cleanResult.append(input.charAt(i));
+            }
+        }
+
+        return cleanResult.toString();
+    }
 
     /*
     Bellow are the methods used for different ways of reconstruction of ordinal numbers.
@@ -106,8 +126,59 @@ public class Sequence {
                     continue;
                 }
 
-                if(doesGeneratedSeqContainSubSeq(
-                        generateSeqStartingFromNum(seqBeginning, subSequence.length()), subSequence)) {
+                if(validateSequenceBeginning(seqBeginning, subSequence)){
+                    possibleFONs.add(new BigInteger(seqBeginning));
+                }
+            }
+        }
+
+        if(possibleFONs.isEmpty()){
+            return nothingWasFound;
+        }
+
+        return findMinimalPossibleFON(possibleFONs);
+    }
+
+    /**
+     * CASE #2.
+     * Here the idea is almost the same as in case 1.
+     * We are taking the very right digit(-s), substituting at the
+     * very-very right non-existing position digits 0...9, subtracting 1 and
+     * reconstructing back the row.
+     * E.g. we have 7812
+     * - taking 2 and substituting 0 gives us 20
+     * - going back 181920
+     * - then substituting 1 gives us 192021 and so on until 29
+     * - after that let's take two right digits 12
+     * - 120 -> 119120
+     * - 121 -> 120121
+     *
+     * Yes, it's better to miss the case with 78120..78129
+     *
+     * @param subSequence
+     * @return
+     */
+    static BigInteger getFONcombineDigitsIntoNumRightToLeft(final String subSequence){
+        List<BigInteger> possibleFONs = new ArrayList<BigInteger>();
+
+        int length = subSequence.length();
+        //starting from the very right
+        for(int startFrom = length - 1; startFrom > 0; startFrom--){
+            //substituting at the very right non-existing pos rear right digits 0..9
+            for(int rrDigit = 0; rrDigit <= 9; rrDigit++) {
+                StringBuilder number = new StringBuilder();
+                number.append(subSequence.substring(startFrom));
+                number.append(rrDigit);
+
+                //decreasing the beginning to cover opened left-side positions
+                String seqBeginning = shiftBackBeginning(number.toString(), startFrom);
+
+                //if we dropped into negative area then there's no sense to continue
+                if(seqBeginning.equals(nothingWasFound.toString())){
+                    continue;
+                }
+
+                if(validateSequenceBeginning(seqBeginning, subSequence)) {
                     possibleFONs.add(new BigInteger(seqBeginning));
                 }
             }
@@ -144,8 +215,7 @@ public class Sequence {
         number.append(rearRightDigit);
         number.append(subSequence.substring(0, subSequence.length() - 1));
 
-        if(doesGeneratedSeqContainSubSeq(
-                generateSeqStartingFromNum(number.toString(), subSequence.length()), subSequence)){
+        if(validateSequenceBeginning(number.toString(), subSequence)){
             return new BigInteger(number.toString());
         }
 
@@ -200,18 +270,17 @@ public class Sequence {
             StringBuilder number = new StringBuilder();
             number.append(subSequence.substring(i));
             number.append(subSequence.substring(0, i));
-            //1. Generate a sequence from number got above longer than subSequence
-            //2. Check whether seq contains subSeq or not
-            //3. If true, put into possibleFONs
-            if(doesGeneratedSeqContainSubSeq(
-                    generateSeqStartingFromNum(number.toString(), subSequence.length()), subSequence)) {
+
+            if(validateSequenceBeginning(number.toString(), subSequence)) {
                 possibleFONs.add(new BigInteger(number.toString()));
             }
         }
 
-        BigInteger result = findMinimalPossibleFON(possibleFONs);
+        if(possibleFONs.isEmpty()){
+            return nothingWasFound;
+        }
 
-        return result;
+        return findMinimalPossibleFON(possibleFONs);
     }
 
     /**
@@ -317,39 +386,6 @@ public class Sequence {
         return initial.subtract(BigInteger.ONE);
     }
 
-    //Old methods for straight forward and time consuming solution
-
-    static void setSeqWidthLimit(int width){
-        seqWidthLimit = width;
-    }
-
-    static StringBuilder updateSequence(StringBuilder sequence, Integer digit, int seqWidth){
-        StringBuilder result;
-
-        if(sequence.length() >= seqWidth) {
-            result = new StringBuilder(sequence.substring(1));
-            result.append(digit);
-            curPosition = curPosition.add(BigInteger.ONE);
-        } else {
-            result = sequence.append(digit);
-        }
-
-        return result;
-    }
-
-    static boolean areSeqAndSubseqEqual(String subSequence, String sequence){
-        if(subSequence.length() != sequence.length()){
-            return false;
-        }
-
-        for(int i = 0; i < subSequence.length(); i++){
-            if(subSequence.charAt(i) != sequence.charAt(i)){
-                return false;
-            }
-        }
-        return true;
-    }
-
     /**
      * If we have a sequence 723014458 and standing at 7th position and taking two digits, we have number 58 and treating it as a beginning of a sequence.
      * We want to reconstruct the sequence. We can't just increase 58, because we have 7 positions at the left
@@ -378,10 +414,76 @@ public class Sequence {
         //looking for a minimal value
         BigInteger result = BigInteger.valueOf(Long.MAX_VALUE);
         for (BigInteger bi : possibleFONs) {
-            if (bi.compareTo(result) == -1) {
+            if (bi.compareTo(BigInteger.ZERO) != 0 && bi.compareTo(result) == -1) {
                 result = bi;
             }
         }
+
+        if(result.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) == 0){
+            return nothingWasFound;
+        }
+
         return result;
     }
+
+    /** 1. Generate a sequence from number got above longer than subSequence
+      * 2. Check whether seq contains subSeq or not
+     */
+    static boolean validateSequenceBeginning(String possibleBeginning, String subSequence){
+        String sequence =
+            generateSeqStartingFromNum(possibleBeginning, subSequence.length());
+        return doesGeneratedSeqContainSubSeq(sequence, subSequence);
+    }
+
+    static int getSubSeqRelativePos(String sequence, String subSequence){
+        int relativePos = 0;
+        boolean found = false;
+
+        for(int i = 0; i < sequence.length() && !found; i++){
+            relativePos = i;
+            for(int j = 0; j < subSequence.length(); j++){
+                if(subSequence.charAt(j) != sequence.charAt(i + j)) {
+                    break;
+                }
+                if(j == subSequence.length() - 1) {
+                    found = true;
+                }
+            }
+        }
+
+        return relativePos;
+    }
+
+    /*
+    //Old methods for straight forward and time consuming solution
+
+    private static BigInteger curPosition = BigInteger.ONE;
+
+    static StringBuilder updateSequence(StringBuilder sequence, Integer digit, int seqWidth){
+        StringBuilder result;
+
+        if(sequence.length() >= seqWidth) {
+            result = new StringBuilder(sequence.substring(1));
+            result.append(digit);
+            curPosition = curPosition.add(BigInteger.ONE);
+        } else {
+            result = sequence.append(digit);
+        }
+
+        return result;
+    }
+
+    static boolean areSeqAndSubseqEqual(String subSequence, String sequence){
+        if(subSequence.length() != sequence.length()){
+            return false;
+        }
+
+        for(int i = 0; i < subSequence.length(); i++){
+            if(subSequence.charAt(i) != sequence.charAt(i)){
+                return false;
+            }
+        }
+        return true;
+    }
+    */
 }
