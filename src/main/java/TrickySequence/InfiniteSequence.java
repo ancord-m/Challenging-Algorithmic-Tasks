@@ -22,8 +22,8 @@ public class InfiniteSequence {
             return -1L;
         }
 
-        List<BigInteger> tempFONs = new ArrayList<BigInteger>(); //everything with "-1"
-        List<BigInteger> possibleFONs = new ArrayList<BigInteger>(); //clean results without -1
+        List<BigInteger> tempFONs = new ArrayList<BigInteger>(); //everything including "-1"
+        List<BigInteger> possibleFONs = new ArrayList<BigInteger>(); //possible first ordinal numbers
 
         //trying to find all possible ordinal numbers which can give the subsequence
         tempFONs.add(getFONcombineDigitsIntoNumLeftToRight(A));
@@ -49,7 +49,7 @@ public class InfiniteSequence {
 
         //picking up the smallest real First Ordinal Number
         BigInteger realFON = findMinimalPossibleFON(possibleFONs);
-        //System.out.println("Sequence MUST begin from: " + realFON);
+        System.out.println("Sequence MUST begin from: " + realFON);
 
        //reconstructing sequence
         String sequence = generateSeqStartingFromNum(realFON.toString(), A.length());
@@ -414,6 +414,8 @@ public class InfiniteSequence {
             result.append(biNumber);
             biNumber = getNextNumForSequence(biNumber);
         }
+
+        result.append(biNumber);
 
         return result.toString();
     }

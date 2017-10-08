@@ -1,6 +1,7 @@
 package TrickySequence;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.FileWriter;
@@ -38,7 +39,7 @@ public class MethodsTests {
         */
     }
 
-    @Test
+    @Ignore
     public void testNumbersInRangeCount(){
         int counter = 0;
         for(int i = 1000000; i < 10000000; i++){
@@ -59,6 +60,8 @@ public class MethodsTests {
         Assert.assertEquals(BigInteger.valueOf(190), infiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(100)));
         Assert.assertEquals(BigInteger.valueOf(1), infiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(1)));
         Assert.assertEquals(BigInteger.valueOf(2392), infiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(834)));
+
+        System.out.println(infiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(6299)));
     }
 
     @Test
@@ -110,9 +113,8 @@ public class MethodsTests {
         Integer minLength = 13;
 
         String result = infiniteSequence.generateSeqStartingFromNum(startingNum, minLength);
-        System.out.println(result);
 
-        Assert.assertEquals("4567456845694570", result);
+        Assert.assertEquals("45674568456945704571", result);
     }
 
     @Test
@@ -138,7 +140,7 @@ public class MethodsTests {
 
         subSequence = "4555";
         result = infiniteSequence.getFONcombineDigitsIntoNumLeftToRight(subSequence);
-        Assert.assertEquals(BigInteger.valueOf(54), result);
+        Assert.assertEquals(BigInteger.valueOf(53), result);
 
         subSequence = "113472";
         result = infiniteSequence.getFONcombineDigitsIntoNumLeftToRight(subSequence);
@@ -181,11 +183,11 @@ public class MethodsTests {
     public void testGetFONcombineDigitsIntoNumRightToLeft(){
         String subSequence = "3480";
         BigInteger result = infiniteSequence.getFONcombineDigitsIntoNumRightToLeft(subSequence);
-        Assert.assertEquals(BigInteger.valueOf(4803), result);
+        Assert.assertEquals(BigInteger.valueOf(4802), result);
 
         subSequence = "3483";
         result = infiniteSequence.getFONcombineDigitsIntoNumRightToLeft(subSequence);
-        Assert.assertEquals(BigInteger.valueOf(834), result);
+        Assert.assertEquals(BigInteger.valueOf(833), result);
 
         subSequence = "19472";
         result = infiniteSequence.getFONcombineDigitsIntoNumRightToLeft(subSequence);
