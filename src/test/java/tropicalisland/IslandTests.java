@@ -38,6 +38,17 @@ public class IslandTests {
                     };
             Assert.assertEquals(0, instance.getWaterVolume(island));
         }
+        {
+            Integer[][] island =
+                    {
+                            {1000, 1000, 1000, 1000, 1000},
+                            {1000,    1,    1,    1, 1000},
+                            {1000,    1,    1,    1, 1000},
+                            {1000,    1,    1,    1, 1000},
+                            {1000, 1000, 1000, 1000, 1000}
+                    };
+            Assert.assertEquals(8991, instance.getWaterVolume(island));
+        }
     }
 
     //simple tests

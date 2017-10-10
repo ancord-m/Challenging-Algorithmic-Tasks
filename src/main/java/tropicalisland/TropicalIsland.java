@@ -3,67 +3,62 @@ package tropicalisland;
 import java.util.Random;
 
 public class TropicalIsland {
-    private static final int H_MAX = 9;
-    private static final int N_MAX = 5;
-    private static final int M_MAX = 5;
+    private static final int H_MAX = 1000; //max height
+    private static final int N_MAX = 50;  //max row quantity
+    private static final int M_MAX = 50;  //max column quantity
 
-    private Integer[][] W;
+    private Integer[][] islandAfterRain;
 
     public static void main(String[] args) {
         TropicalIsland instance = new TropicalIsland();
+
         Integer[][] island = instance.getIsland();
-
-        System.out.println("Before rain: ");
-        instance.printIsland(island);
-
-        //instance.initW(island);
         int waterVolume = instance.getWaterVolume(island);
+
         System.out.println(waterVolume);
     }
 
     public int getWaterVolume(Integer[][] island) {
-        W = initW(island);
+        initIslandAfterRain(island);
 
         for(int row = 0; row < island.length; row++){
-            islandWalker(island, 0, row, 0);
+            islandBackTracker(island, 0, row, 0);
         }
 
         for(int row = 0; row < island.length; row++){
-            islandWalker(island, island[0].length, row, 0);
+            islandBackTracker(island, island[0].length - 1, row, 0);
         }
 
         for(int col = 0; col < island[0].length; col++){
-            islandWalker(island, col, 0, 0);
+            islandBackTracker(island, col, 0, 0);
         }
 
         for(int col = 0; col < island[0].length; col++){
-            islandWalker(island, col, island.length, 0);
+            islandBackTracker(island, col, island.length - 1, 0);
         }
 
-        System.out.println("After rain: ");
-        printIsland(W);
-
-        return 0;
+        return calcAfterRainWaterVolume(island);
     }
 
-    void islandWalker(Integer[][] island, int row, int col, int height){
-        if(row < 0 || col < 0 || row >= N_MAX  || col >= M_MAX ){
+    void islandBackTracker(Integer[][] island, int row, int col, int height){
+        //the main recurrence relations
+        if(row < 0 || col < 0 || row >= island.length  || col >= island[0].length ){
             return;
         }
 
-        if(W[row][col] <= height){
+        if(islandAfterRain[row][col] <= height){
             return;
         }
 
         if(height < island[row][col]){
             height = island[row][col];
         }
-        W[row][col] = height;
+        islandAfterRain[row][col] = height;
 
-        islandWalker(island, row-1, col, height);
-        islandWalker(island, row+1, col, height);
-        islandWalker(island, row, col-1, height);
-        islandWalker(island, row, col+1, height);
+        islandBackTracker(island, row-1, col, height);
+        islandBackTracker(island, row+1, col, height);
+        islandBackTracker(island, row, col-1, height);
+        islandBackTracker(island, row, col+1, height);
     }
 
     //auxiliary methods
@@ -78,10 +73,8 @@ public class TropicalIsland {
 
     Integer[][] getIsland() {
         Random random = new Random();
-        int N = 5;
-        int M = 5;
-        //int N = random.nextInt(N_MAX) + 1;
-        //int M = random.nextInt(M_MAX) + 1;
+        int N = random.nextInt(N_MAX) + 1;
+        int M = random.nextInt(M_MAX) + 1;
         Integer[][] island = new Integer[N][M];
 
         for(int row = 0; row < N; row++){
@@ -93,14 +86,24 @@ public class TropicalIsland {
         return island;
     }
 
-    Integer[][] initW(Integer[][] island){
-        Integer[][] W = new Integer[island.length][island[0].length];
-        for(int row = 0; row < W.length; row++){
-            for(int col = 0; col < W[row].length; col++){
-                W[row][col] = H_MAX + 1;
+    void initIslandAfterRain(Integer[][] island){
+        islandAfterRain = new Integer[island.length][island[0].length];
+        for(int row = 0; row < islandAfterRain.length; row++){
+            for(int col = 0; col < islandAfterRain[0].length; col++){
+                islandAfterRain[row][col] = H_MAX + 1;
+            }
+        }
+    }
+
+    int calcAfterRainWaterVolume(Integer[][] islandBeforeRain){
+        int result = 0;
+
+        for(int row = 0; row < islandBeforeRain.length; row++){
+            for(int col = 0; col < islandBeforeRain[0].length; col++){
+                result += islandAfterRain[row][col] - islandBeforeRain[row][col];
             }
         }
 
-        return W;
+        return result;
     }
 }

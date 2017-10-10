@@ -7,12 +7,14 @@ import java.util.Scanner;
 
 public class InfiniteSequence {
     private final BigInteger nothingWasFound = BigInteger.valueOf(-1);
+    private final boolean JUMP_OVER_LONG_LIMIT = false; //substitute it for TRUE to find answers for really long subSequences
 
     public static void main(String[] args) {
         InfiniteSequence infiniteSequence = new InfiniteSequence();
 
         String subSequence = infiniteSequence.getSubsequence(); //acquiring the desired subsequence
         long result = infiniteSequence.findSequence(subSequence);
+
         System.out.println(result);
     }
 
@@ -22,10 +24,10 @@ public class InfiniteSequence {
             return -1L;
         }
 
-        List<BigInteger> tempFONs = new ArrayList<BigInteger>(); //everything including "-1"
-        List<BigInteger> possibleFONs = new ArrayList<BigInteger>(); //possible first ordinal numbers
+        List<BigInteger> tempFONs = new ArrayList<BigInteger>(); //everything including "-1", i.e. "nothingWasFound"
+        List<BigInteger> possibleFONs = new ArrayList<BigInteger>(); //possible First Ordinal Numbers which can derive a desired subSequence
 
-        //trying to find all possible ordinal numbers which can give the subsequence
+        //trying to find all possible ordinal numbers which can give the subSequence
         tempFONs.add(getFONcombineDigitsIntoNumLeftToRight(A));
         tempFONs.add(getFONcombineDigitsIntoNumRightToLeft(A));
         tempFONs.add(getFONrearRightMinusOneGoesToLeft(A));
@@ -72,23 +74,7 @@ public class InfiniteSequence {
         return Long.parseLong(result.toString());
     }
 
-    String getSubsequence(){
-        //System.out.print("Введите искомую последовательность цифр: ");
-        Scanner sc = new Scanner(System.in);
-        String input = sc.nextLine();
-        return input;
-    }
 
-    String eliminateNonDigits(String input){
-        StringBuilder cleanResult = new StringBuilder();
-        for(int i = 0; i < input.length(); i++){
-            if(input.charAt(i) >= '0' && input.charAt(i) <= '9'){
-                cleanResult.append(input.charAt(i));
-            }
-        }
-
-        return cleanResult.toString();
-    }
 
     /*
     Bellow are the methods used for different ways of reconstruction of ordinal numbers.
@@ -345,12 +331,39 @@ public class InfiniteSequence {
             return nothingWasFound;
         }
         //at last cutting of the overlapping positions
-        String newSubsequence = subSequence.substring(howMuchToCut);
+       /* String newSubsequence = subSequence.substring(howMuchToCut);
 
-        return getFONsplitAndShuffle(newSubsequence);
+        return getFONsplitAndShuffle(newSubsequence);*/
+
+        BigInteger possibleBegining =
+                getFONsplitAndShuffle(subSequence.substring(howMuchToCut));
+
+        if(validateSequenceBeginning(possibleBegining.toString(), subSequence)){
+            return possibleBegining;
+        }
+
+        return nothingWasFound;
     }
 
     //Below are the auxiliary methods
+
+    String getSubsequence(){
+        //System.out.print("Введите искомую последовательность цифр: ");
+        Scanner sc = new Scanner(System.in);
+        String input = sc.nextLine();
+        return input;
+    }
+
+    String eliminateNonDigits(String input){
+        StringBuilder cleanResult = new StringBuilder();
+        for(int i = 0; i < input.length(); i++){
+            if(input.charAt(i) >= '0' && input.charAt(i) <= '9'){
+                cleanResult.append(input.charAt(i));
+            }
+        }
+
+        return cleanResult.toString();
+    }
 
     /**
      * !!ONE OF THE MAIN METHODS!!
@@ -514,37 +527,4 @@ public class InfiniteSequence {
 
         return relativePos;
     }
-
-    /*
-    //Old methods for straight forward and time consuming solution
-
-    private static BigInteger curPosition = BigInteger.ONE;
-
-    static StringBuilder updateSequence(StringBuilder sequence, Integer digit, int seqWidth){
-        StringBuilder result;
-
-        if(sequence.length() >= seqWidth) {
-            result = new StringBuilder(sequence.substring(1));
-            result.append(digit);
-            curPosition = curPosition.add(BigInteger.ONE);
-        } else {
-            result = sequence.append(digit);
-        }
-
-        return result;
-    }
-
-    static boolean areSeqAndSubseqEqual(String subSequence, String sequence){
-        if(subSequence.length() != sequence.length()){
-            return false;
-        }
-
-        for(int i = 0; i < subSequence.length(); i++){
-            if(subSequence.charAt(i) != sequence.charAt(i)){
-                return false;
-            }
-        }
-        return true;
-    }
-    */
 }
