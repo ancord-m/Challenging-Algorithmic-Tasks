@@ -7,7 +7,6 @@ import java.util.Scanner;
 
 public class InfiniteSequence {
     private final BigInteger nothingWasFound = BigInteger.valueOf(-1);
-    private final boolean JUMP_OVER_LONG_LIMIT = false; //substitute it for TRUE to find answers for really long subSequences
 
     public static void main(String[] args) {
         InfiniteSequence infiniteSequence = new InfiniteSequence();
@@ -36,12 +35,9 @@ public class InfiniteSequence {
         tempFONs.add(getFONpositionOverlap(A));
 
         //cleaning results
-        //System.out.println("Possible beginnings");
         for(BigInteger bi : tempFONs){
-            //System.out.println(bi);
             if(bi.compareTo(nothingWasFound) != 0){
                 possibleFONs.add(bi);
-                //  System.out.println(bi);
             }
         }
 
@@ -51,11 +47,10 @@ public class InfiniteSequence {
 
         //picking up the smallest real First Ordinal Number
         BigInteger realFON = findMinimalPossibleFON(possibleFONs);
-        System.out.println("Sequence MUST begin from: " + realFON);
+        //System.out.println("Sequence MUST begin from: " + realFON);
 
        //reconstructing sequence
         String sequence = generateSeqStartingFromNum(realFON.toString(), A.length());
-       // System.out.println("Reconstructed sequence: " + sequence);
 
         //calculating the relative position inside the generated sequence which the subSequence starts from
         int positionShift = getSubSeqRelativePos(sequence, A);
@@ -65,16 +60,16 @@ public class InfiniteSequence {
 
         //correcting and finally calculating the first subSequence appearance!
         BigInteger result = firstRealFONdigitPos.add(BigInteger.valueOf(positionShift));
-        //System.out.println("FIRST ENTRANCE: " + result);
 
         if(result.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) == 1){
+            System.out.println("You've exceeded LONG.MAX_VALUE.");
+            System.out.println("The return value will be -1, but the position of the first appearance of sub-sequence A is below:");
+            System.out.println(result.toString());
             return -1L;
         }
 
         return Long.parseLong(result.toString());
     }
-
-
 
     /*
     Bellow are the methods used for different ways of reconstruction of ordinal numbers.
@@ -481,19 +476,15 @@ public class InfiniteSequence {
 
     BigInteger findMinimalPossibleFON(List<BigInteger> possibleFONs) {
         //looking for a minimal value
-        BigInteger result = BigInteger.valueOf(Long.MAX_VALUE);
-        //BigInteger result = BigInteger.TEN.pow(500);
+        BigInteger result = BigInteger.TEN.pow(500);
+
         for (BigInteger bi : possibleFONs) {
             if (bi.compareTo(BigInteger.ZERO) != 0 && bi.compareTo(result) == -1) {
                 result = bi;
             }
         }
 
-        //ATTENTION!!! THIS IS THE LIMITING IF-CASE
-        //switch it off to jump over LONG.MAX_VALUE
-        //and un-comment result 10^500
-        //to print out really enormous first appearance positions
-        if(result.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) == 0){
+        if(result.compareTo(BigInteger.TEN.pow(500)) == 0){
             return nothingWasFound;
         }
 

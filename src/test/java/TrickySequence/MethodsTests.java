@@ -12,6 +12,17 @@ public class MethodsTests {
     private static InfiniteSequence infiniteSequence = new InfiniteSequence();
 
     @Test
+    public void testFindSequence(){
+        String subSequence = "6789";
+        long result = infiniteSequence.findSequence(subSequence);
+        Assert.assertEquals(6, result);
+
+        subSequence = "999999999999999999999999999";
+        result = infiniteSequence.findSequence(subSequence);
+        Assert.assertEquals(-1, result);
+    }
+
+    @Test
     public void testGetNextNumForSequence(){
         BigInteger result = infiniteSequence.getNextNumForSequence(BigInteger.ZERO);
 
@@ -61,7 +72,7 @@ public class MethodsTests {
         Assert.assertEquals(BigInteger.valueOf(1), infiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(1)));
         Assert.assertEquals(BigInteger.valueOf(2392), infiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(834)));
 
-        System.out.println(infiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(114890)));
+        System.out.println(infiniteSequence.getDigitsBeforeNumber(BigInteger.valueOf(4542)));
     }
 
     @Test
@@ -98,13 +109,6 @@ public class MethodsTests {
         subSequence = "000400";
         result = infiniteSequence.getFONsplitAndShuffle(subSequence);
         Assert.assertEquals(BigInteger.valueOf(4000), result);
-    }
-
-    @Test
-    public void testGetFONuniqueNumber(){
-        String sequence = "3564536";
-        BigInteger result = infiniteSequence.getFONuniqueNumber(sequence);
-        Assert.assertEquals(BigInteger.valueOf(3564536), result);
     }
 
     @Test
